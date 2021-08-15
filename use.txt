@@ -1,0 +1,1 @@
+python3 pdf-ocr.py document.pdf document_text.txt housing
