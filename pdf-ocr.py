@@ -18,11 +18,13 @@ except:
     os.mkdir(imgDirectory)   
 
 # Convert PDF pages to JPG images
+print("Converting PDF pages to JPG images...")
 pages = convert_from_path(file, 500)
 for i, page in enumerate(pages):
     page.save("images/page" + str(i) + ".jpg", 'JPEG')
 
 # Gather keywords
+print("Gathering Keywords...")
 instances = {}
 for k in keywords:
     instances[k] = []
@@ -30,12 +32,15 @@ for k in keywords:
 # For each page...
 f = open(output_file, "a")
 for i in range(0, len(pages)):
+    print("Checking page", i+1, "for...")
+
     # Convert JPG to txt
     text = str(((pytesseract.image_to_string(Image.open("images/page" + str(i) + ".jpg")))))
     text = text.replace('-\n', '') 
 
     # For each keyword...
     for k in keywords:
+        print(k)
         idx = 0
         while True:
             idx = text.find(k, idx)
@@ -47,6 +52,7 @@ for i in range(0, len(pages)):
 
             idx += 1
 
+    print("Writing Text To File...")
     f.write(text)
 
 # Print results
@@ -61,6 +67,7 @@ for k, l in instances.items():
 f.close()
 
 # Clean img directory
+print("Cleaning Images Directory...")
 for filename in os.listdir(imgDirectory):
     file_path = os.path.join(imgDirectory, filename)
     try:
@@ -70,3 +77,5 @@ for filename in os.listdir(imgDirectory):
             shutil.rmtree(file_path)
     except Exception as e:
         print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+print("Finished!")
