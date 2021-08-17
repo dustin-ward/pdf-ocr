@@ -1,4 +1,4 @@
-### PDF OCR Tool
+# PDF OCR Tool
 
 This is a simple OCR tool to find keywords within a PDF document
 
