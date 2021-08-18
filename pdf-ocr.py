@@ -7,8 +7,7 @@ from pdf2image import convert_from_path
 
 # Cmd line args
 file = sys.argv[1]
-output_file = sys.argv[2]
-keywords = sys.argv[3:]
+keywords = sys.argv[2:]
 
 # Check for and create img directory
 imgDirectory = os.getcwd() + "/images"
@@ -23,16 +22,11 @@ pages = convert_from_path(file, 500)
 for i, page in enumerate(pages):
     page.save("images/page" + str(i) + ".jpg", 'JPEG')
 
-# Gather keywords
-print("Gathering Keywords...")
-instances = {}
-for k in keywords:
-    instances[k] = []
+PageScore = {}
 
 # For each page...
-f = open(output_file, "a")
 for i in range(0, len(pages)):
-    print("Checking page", i+1, "for...")
+    print("Scanning page", i+1)
 
     # Convert JPG to txt
     text = str(((pytesseract.image_to_string(Image.open("images/page" + str(i) + ".jpg")))))
@@ -40,31 +34,23 @@ for i in range(0, len(pages)):
 
     # For each keyword...
     for k in keywords:
-        print(k)
         idx = 0
         while True:
             idx = text.find(k, idx)
             if idx == -1:
                 break
             
-            # Add page # and position to dictionary
-            instances[k].append((i+1, round(idx/len(text)*100, 2)))
+            # Add point to page
+            if i+1 not in PageScore:
+                PageScore[i+1] = 1
+            else:
+                PageScore[i+1] += 1
 
             idx += 1
 
-    print("Writing Text To File...")
-    f.write(text)
-
 # Print results
-for k, l in instances.items():
-    print("INSTANCES OF KEYWORD", k, ":")
-    if len(l):
-        for i in l:
-            print("PAGE:", i[0], i[1], "%")
-    else:
-        print("None")
-
-f.close()
+for i, s in sorted(PageScore.items(), key=lambda item: item[1]):
+    print("Page", i, ":", s, "keyword matches")
 
 # Clean img directory
 print("Cleaning Images Directory...")
