@@ -13,4 +13,4 @@ Run `install.sh` to gather all the python reqs
 
 ## Usage
 
-`python3 pdf-ocr.py <pdf-file> <txt-output-file> <keyword-1> <keyword-2>...`
+`python3 pdf-ocr.py <pdf-file> <keyword-1> <keyword-2>...`
